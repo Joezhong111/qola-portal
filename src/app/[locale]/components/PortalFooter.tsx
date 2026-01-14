@@ -47,7 +47,7 @@ export default function PortalFooter() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "api-key": process.env.NEXT_PUBLIC_BREVO_API_KEY as string,
+          "api-key": (process.env.NEXT_PUBLIC_BREVO_API_KEY || "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") as string,
         },
         body: JSON.stringify({ email, updateEnabled: false, listIds: [4] }),
       });
