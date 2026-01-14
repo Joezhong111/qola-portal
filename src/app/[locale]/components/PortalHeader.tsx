@@ -2,17 +2,16 @@
 
 import { useState, memo } from "react";
 
-const NAV_LINKS = [
-  { label: 'Home', href: '#' },
-  { label: 'Products', href: '#' },
-  { label: 'Shop', href: '#' },
-  { label: 'Locator', href: '#' },
-  { label: 'Contact', href: '#' }
+const NAV_ITEMS = [
+  { label: 'Home', path: '' },
+  { label: 'Products', path: 'products' },
+  { label: 'Shop', path: 'shop' },
+  { label: 'Locator', path: 'locator' },
+  { label: 'Contact', path: 'contact' }
 ];
 
 const MOBILE_SHORTCUTS = ['Home', 'Shop'];
-// 预先过滤移动端链接，避免在每轮渲染中执行 filter
-const MOBILE_NAV_LINKS = NAV_LINKS.filter(link => MOBILE_SHORTCUTS.includes(link.label));
+
 
 interface NavLinkProps {
   label: string;
@@ -35,14 +34,36 @@ const NavLink = memo(({ label, href, className = "", onClick }: NavLinkProps) =>
 
 NavLink.displayName = "NavLink";
 
+import { useParams } from "next/navigation";
+
+// ... (NavLink component remains effectively the same, just receiving href)
+
 export default function PortalHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const params = useParams();
+  const locale = params?.locale as string || 'en-my'; // Default fallback
+
+  // Dynamically generate links based on locale
+  const navLinks = NAV_ITEMS.map(item => ({
+    label: item.label,
+    href: item.label === 'Home' ? `/${locale}` : `/${locale}/${item.path}`
+  }));
+
+  const mobileNavLinks = navLinks.filter(link => MOBILE_SHORTCUTS.includes(link.label));
 
   // 使用稳定的函数引用
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
   const handleOverlayLinkClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsMenuOpen(false);
+     // Check if it's a hash link, if so prevent default. 
+     // If it is a page navigation, we might want to let it happen.
+     // The original code had e.preventDefault() which stops navigation.
+     // We should only prevent default if we are handling navigation manually or if it's anchor scroll.
+     // Since these are page transitions, we should probably Allow navigation but close menu.
+     // However, for consistency with original code which seemed to be WIP (href='#'), 
+     // I will remove e.preventDefault() for real links so they navigate.
+     // But wait, the original code had `onClick={handleOverlayLinkClick}` which did `e.preventDefault()`.
+     // Correct behavior: Close menu, then navigate.
+     setIsMenuOpen(false);
   };
 
   return (
@@ -54,14 +75,15 @@ export default function PortalHeader() {
 
         {/* 桌面端导航 */}
         <nav className={`hidden md:flex gap-10 text-sm tracking-[0.2em] uppercase font-medium items-center absolute left-1/2 -translate-x-1/2 transition-opacity duration-500 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-          {NAV_LINKS.map((link) => (
+          {navLinks.map((link) => (
             <NavLink key={link.label} {...link} />
           ))}
         </nav>
 
+
         {/* 移动端快捷导航 */}
         <nav className={`flex md:hidden gap-5 text-sm uppercase tracking-[0.2em] font-medium items-center absolute left-1/2 -translate-x-1/2 transition-opacity duration-500 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-          {MOBILE_NAV_LINKS.map((link) => (
+          {mobileNavLinks.map((link) => (
             <NavLink key={link.label} {...link} />
           ))}
         </nav>
@@ -92,7 +114,7 @@ export default function PortalHeader() {
         }}
       >
         <nav className={`flex flex-col items-center gap-8 text-3xl md:text-5xl font-serif text-[#FAF7F2] [perspective:1000px] transition-all duration-500 delay-300 ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          {NAV_LINKS.map((link) => (
+          {navLinks.map((link) => (
             <a 
               key={link.label}
               href={link.href} 

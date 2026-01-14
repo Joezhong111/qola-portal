@@ -258,7 +258,7 @@ export default function PortalFAQ() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full bg-[#191919] text-white">
+    <div id="faq" ref={containerRef} className="relative w-full bg-[#191919] text-white">
       <div ref={triggerRef} className="min-h-screen w-full flex flex-col md:flex-row max-w-[1920px] mx-auto px-4 sm:px-8 md:px-16 lg:px-24 pt-24 md:pt-0 pb-12 md:pb-0">
         
         {/* Left Side: Title */}

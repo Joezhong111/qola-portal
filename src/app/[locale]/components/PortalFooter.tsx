@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -13,19 +14,63 @@ if (typeof window !== "undefined") {
 const NAV_LINKS = ['Home', 'Products', 'Shop', 'Locator', 'Contact'];
 const SERVICE_LINKS = ['Privacy Policy', 'Refund Policy', 'Shipping Policy', 'Terms Of Service', 'Wholesale'];
 const SOCIAL_LINKS = [
-  { name: 'Instagram', href: '#' },
-  { name: 'Facebook', href: '#' },
-  { name: 'WhatsApp', href: '#' },
-  { name: 'TikTok', href: '#' },
-  { name: 'Dribbble', href: '#' },
+  { name: 'Instagram', href: 'https://www.instagram.com/qola.iraqofficial' },
+  { name: 'WhatsApp', href: 'https://wa.me/message/QPRYHCZHMXUBL1' },
+  { name: 'TikTok', href: 'https://www.tiktok.com/@qola.iraq.official' },
+  { name: 'Youtube', href: 'https://www.youtube.com/@QolaOfficial' },
 ];
 
 export default function PortalFooter() {
+  const params = useParams();
+  const locale = params.locale;
   const containerRef = useRef<HTMLDivElement>(null);
   const impactfulTextRef = useRef<HTMLHeadingElement>(null);
   const wavyRef = useRef<HTMLDivElement>(null);
   const visionRef = useRef<HTMLHeadingElement>(null);
   const iconCRef = useRef<HTMLDivElement>(null);
+
+  const [email, setEmail] = useState("");
+  const [subStatus, setSubStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [subMsg, setSubMsg] = useState("");
+
+  const handleSubscribe = async () => {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setSubStatus("error");
+      setSubMsg("Please enter a valid email address.");
+      return;
+    }
+    setSubStatus("loading");
+    setSubMsg("");
+    
+    try {
+      const res = await fetch("https://api.brevo.com/v3/contacts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": "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",
+        },
+        body: JSON.stringify({ email, updateEnabled: false, listIds: [4] }),
+      });
+
+      if (res.ok || res.status === 201 || res.status === 204) {
+        setSubStatus("success");
+        setSubMsg("Subscribed successfully!");
+        setEmail("");
+        setTimeout(() => {
+          setSubStatus("idle");
+          setSubMsg("");
+        }, 3000);
+      } else {
+        const data = await res.json();
+        setSubStatus("error");
+        setSubMsg(data.message || "Subscription failed.");
+      }
+    } catch (error) {
+      console.error(error);
+      setSubStatus("error");
+      setSubMsg("Something went wrong. Please try again.");
+    }
+  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -139,13 +184,30 @@ export default function PortalFooter() {
               <p>Dubai Al Barsha</p>
               <p>UAE</p>
             </div>
-            <div className="space-y-4 pt-4">
-              <Link href="mailto:contact@qolapouch.com" className="text-sm border-b border-white/30 hover:border-white pb-1 group flex items-center w-fit transition-colors">
-                contact@qolapouch.com <span className="ml-1 inline-block transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
-              </Link>
-              <Link href="tel:+11111111111" className="text-sm border-b border-white/30 hover:border-white pb-1 group flex items-center w-fit transition-colors">
-                +11 11 1111 1111 <span className="ml-1 inline-block transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
-              </Link>
+            <div className="space-y-8 pt-4">
+              <div className="space-y-3">
+                <p className="text-xs text-gray-500 font-bold tracking-widest uppercase">UAE Contact</p>
+                <div className="space-y-2">
+                  <Link href="tel:+971505330682" className="text-sm border-b border-white/30 hover:border-white pb-1 group flex items-center w-fit transition-colors">
+                    +971 505330682 <span className="ml-1 inline-block transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                  </Link>
+                  <Link href="mailto:johnson25@Vitanicvision.com" className="text-sm border-b border-white/30 hover:border-white pb-1 group flex items-center w-fit transition-colors">
+                    johnson25@Vitanicvision.com <span className="ml-1 inline-block transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                  </Link>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-xs text-gray-500 font-bold tracking-widest uppercase">Iraq Contact</p>
+                <div className="space-y-2">
+                  <Link href="tel:+9647508522490" className="text-sm border-b border-white/30 hover:border-white pb-1 group flex items-center w-fit transition-colors">
+                    009647511004511 <span className="ml-1 inline-block transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                  </Link>
+                  <Link href="mailto:qola.iraqofficial@gmail.com" className="text-sm border-b border-white/30 hover:border-white pb-1 group flex items-center w-fit transition-colors">
+                    qola.iraqofficial@gmail.com <span className="ml-1 inline-block transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -156,7 +218,7 @@ export default function PortalFooter() {
               {NAV_LINKS.map((item, index) => (
                 <li key={item}>
                   <Link 
-                    href={`/${item.toLowerCase()}`} 
+                    href={item === 'Home' ? `/${locale}` : `/${locale}/${item.toLowerCase()}`} 
                     className={`text-2xl md:text-3xl lg:text-4xl font-bold tracking-tighter transition-colors inline-block 
                       ${index === 0 
                         ? 'text-white group-hover/nav:text-gray-500 hover:!text-white' 
@@ -192,6 +254,7 @@ export default function PortalFooter() {
                   <Link 
                     key={item.name} 
                     href={item.href} 
+                    target="_blank"
                     className="relative text-gray-400 hover:text-white transition-colors py-0.5 group"
                     onMouseEnter={(e) => handleSocialHover(e, true)}
                     onMouseLeave={(e) => handleSocialHover(e, false)}
@@ -213,7 +276,11 @@ export default function PortalFooter() {
                   type="email" 
                   id="footer-email"
                   placeholder=" "
-                  className="peer w-full bg-transparent border-b border-gray-700 py-4 pr-12 text-sm focus:border-white outline-none transition-all placeholder:opacity-0"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
+                  className="peer w-full bg-transparent border-b border-gray-700 py-4 pr-12 text-sm focus:border-white outline-none transition-all placeholder:opacity-0 disabled:opacity-50"
+                  disabled={subStatus === 'loading' || subStatus === 'success'}
                 />
                 <label 
                   htmlFor="footer-email"
@@ -223,22 +290,45 @@ export default function PortalFooter() {
                 >
                   Your email <span className="text-red-600 font-bold">*</span>
                 </label>
-                <button className="absolute right-0 bottom-3 p-2 rounded-full border border-gray-700 hover:border-white hover:bg-white hover:text-black transition-all group/btn overflow-hidden" aria-label="Subscribe">
-                  <div className="relative w-4 h-4">
-                    <svg 
-                      className="absolute inset-0 transition-transform duration-500 ease-in-out group-hover/btn:translate-x-8 -translate-x-0"
-                      width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                    <svg 
-                      className="absolute inset-0 transition-transform duration-500 ease-in-out -translate-x-8 group-hover/btn:translate-x-0"
-                      width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
+                <button 
+                  onClick={handleSubscribe}
+                  disabled={subStatus === 'loading' || subStatus === 'success'}
+                  className="absolute right-0 bottom-3 p-2 rounded-full border border-gray-700 hover:border-white hover:bg-white hover:text-black transition-all group/btn overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed" 
+                  aria-label="Subscribe"
+                >
+                  <div className="relative w-4 h-4 flex items-center justify-center">
+                    {subStatus === 'loading' ? (
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    ) : subStatus === 'success' ? (
+                      <svg className="w-4 h-4 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    ) : (
+                      <>
+                        <svg 
+                          className="absolute inset-0 transition-transform duration-500 ease-in-out group-hover/btn:translate-x-8 -translate-x-0"
+                          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                        >
+                          <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                        <svg 
+                          className="absolute inset-0 transition-transform duration-500 ease-in-out -translate-x-8 group-hover/btn:translate-x-0"
+                          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                        >
+                          <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                      </>
+                    )}
                   </div>
                 </button>
+                {subMsg && (
+                  <p className={`absolute left-0 -bottom-6 text-[10px] ${subStatus === 'error' ? 'text-red-500' : 'text-green-500'}`}>
+                    {subMsg}
+                  </p>
+                )}
               </div>
             </div>
           </div>
