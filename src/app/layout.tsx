@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
+import { cn, getAssetPath } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "QOLA｜QOLA Mall",
   description: "QOLA",
   icons: {
-    icon: { url: "/logo-100x100.webp", type: "image/webp" },
+    icon: { url: getAssetPath("/logo-100x100.webp"), type: "image/webp" },
   },
 };
 
