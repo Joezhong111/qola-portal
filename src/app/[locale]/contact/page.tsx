@@ -37,7 +37,7 @@ function ContactCard({
       <div className="w-20 h-20 bg-[#F5E6D3] rounded-full flex items-center justify-center mb-6 text-[#E6B375] transition-transform duration-300 group-hover:scale-110">
         {icon}
       </div>
-      <h2 className="text-2xl font-bold mb-2">{title}</h2>
+      <h2 className="text-2xl mb-2">{title}</h2>
       <p className="text-gray-500 mb-8 font-medium">{subtitle}</p>
 
       <div className="space-y-6 mb-10 w-full">

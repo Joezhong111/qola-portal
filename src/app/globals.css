@@ -24,6 +24,9 @@
     --input: 38 15% 90%;
     --ring: 38 83% 47%;
     --radius: 0.5rem;
+    
+    /* 字体变量 */
+    --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   }
 
   .dark {

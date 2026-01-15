@@ -139,7 +139,7 @@ export default function PortalHeader() {
             : 'circle(0% at calc(100% - 40px) 40px)',
         }}
       >
-        <nav className={`flex flex-col items-center gap-8 text-3xl md:text-5xl font-serif text-[#FAF7F2] [perspective:1000px] transition-all duration-500 delay-300 ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <nav className={`flex flex-col items-center gap-8 text-3xl md:text-5xl text-[#FAF7F2] [perspective:1000px] transition-all duration-500 delay-300 ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {navLinks.map((link) => (
             <Link 
               key={link.label}

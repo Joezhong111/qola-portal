@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn, getAssetPath } from "@/lib/utils";
-
-const inter = Inter({ subsets: ["latin"] });
+import { montserrat } from "./fonts/fonts";
 
 export const metadata: Metadata = {
   title: "QOLA｜QOLA Mall",
@@ -19,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN">
-      <body className={cn(inter.className, "antialiased bg-background text-foreground min-h-screen")}>
+    <html lang="zh-CN" className={montserrat.variable}>
+      <body className={cn(montserrat.className, "antialiased bg-background text-foreground min-h-screen")}>
         {children}
       </body>
     </html>

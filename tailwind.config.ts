@@ -18,6 +18,10 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-montserrat)", "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: ["Georgia", "Cambria", "Times New Roman", "Times", "serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

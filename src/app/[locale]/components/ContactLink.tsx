@@ -76,7 +76,7 @@ export default function ContactLink({ href, text }: ContactLinkProps) {
       href={href} 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="flex items-center justify-between font-semibold text-lg hover:text-[#E6B375] transition-colors group/link w-full cursor-pointer"
+      className="flex items-center justify-between text-lg hover:text-[#E6B375] transition-colors group/link w-full cursor-pointer"
     >
       <span className="flex-1 break-all text-left mr-2">{text}</span>
       <ArrowRight 
