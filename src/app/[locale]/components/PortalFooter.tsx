@@ -75,29 +75,33 @@ export default function PortalFooter() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // 1. 顶部标语进入动画
-      gsap.from(impactfulTextRef.current, {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: impactfulTextRef.current,
-          start: "top 90%",
-        },
-      });
+      if (impactfulTextRef.current) {
+        gsap.from(impactfulTextRef.current, {
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: impactfulTextRef.current,
+            start: "top 90%",
+          },
+        });
+      }
 
       // 2. 红色波浪线/下划线展开动画
-      gsap.from(wavyRef.current, {
-        scaleX: 0,
-        transformOrigin: "left center",
-        duration: 1.5,
-        delay: 0.5,
-        ease: "power2.inOut",
-        scrollTrigger: {
-          trigger: impactfulTextRef.current,
-          start: "top 90%",
-        },
-      });
+      if (wavyRef.current && impactfulTextRef.current) {
+        gsap.from(wavyRef.current, {
+          scaleX: 0,
+          transformOrigin: "left center",
+          duration: 1.5,
+          delay: 0.5,
+          ease: "power2.inOut",
+          scrollTrigger: {
+            trigger: impactfulTextRef.current,
+            start: "top 90%",
+          },
+        });
+      }
 
       // 3. 底部文字与图标进入动画 (翻转一次)
       const footerChars = visionRef.current?.querySelectorAll('span');
