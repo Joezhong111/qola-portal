@@ -43,16 +43,15 @@ export default function PortalFooter() {
     setSubMsg("");
     
     try {
-      const res = await fetch("https://api.brevo.com/v3/contacts", {
+      const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "api-key": (process.env.NEXT_PUBLIC_BREVO_API_KEY || "") as string,
         },
-        body: JSON.stringify({ email, updateEnabled: false, listIds: [4] }),
+        body: JSON.stringify({ email }),
       });
 
-      if (res.ok || res.status === 201 || res.status === 204) {
+      if (res.ok) {
         setSubStatus("success");
         setSubMsg("Subscribed successfully!");
         setEmail("");
