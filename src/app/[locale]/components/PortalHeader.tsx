@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, memo } from "react";
+import { useState, memo, useCallback } from "react";
 import Link from 'next/link';
 import { useParams } from "next/navigation";
+import Image from "next/image";
+import { getAssetPath } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { label: 'Home', path: '' },
@@ -36,10 +38,17 @@ const NavLink = memo(({ label, href, className = "", onClick }: NavLinkProps) =>
 
 NavLink.displayName = "NavLink";
 
+const handleDisabledClick = (e: React.MouseEvent) => {
+  e.preventDefault();
+};
+
 export default function PortalHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const params = useParams();
-  const locale = params?.locale as string || 'en-glo'; // Default fallback
+  
+  // 优化参数获取的健壮性，处理可能的数组情况
+  const rawLocale = params?.locale;
+  const locale = (Array.isArray(rawLocale) ? rawLocale[0] : rawLocale) || 'en-glo';
 
   // Dynamically generate links based on locale
   const navLinks = NAV_ITEMS.map(item => ({
@@ -49,12 +58,8 @@ export default function PortalHeader() {
 
   const mobileNavLinks = navLinks.filter(link => MOBILE_SHORTCUTS.includes(link.label));
 
-  // 使用稳定的函数引用
-  const toggleMenu = () => setIsMenuOpen(prev => !prev);
-  
-  const handleDisabledClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-  };
+  // 使用 useCallback 确保函数引用稳定，配合 NavLink 的 memo 使用
+  const toggleMenu = useCallback(() => setIsMenuOpen(prev => !prev), []);
 
   const handleOverlayLinkClick = (e: React.MouseEvent, label: string) => {
      if (DISABLED_ITEMS.includes(label)) {
@@ -66,13 +71,28 @@ export default function PortalHeader() {
 
   return (
     <>
+      {/* Logo Layer - Keeps Logo Natural Color (No Mix Blend) */}
+      <header className="fixed top-0 left-0 right-0 py-4 px-4 md:px-8 flex justify-between items-center z-[71] pointer-events-none">
+        <div className="relative w-16 h-7 md:w-24 md:h-7 flex items-center pointer-events-auto">
+          <Image 
+            src={getAssetPath("/left-top-logo2.webp")} 
+            alt="Qola Logo" 
+            fill 
+            className="object-contain object-left"
+            priority
+          />
+        </div>
+      </header>
+
+      {/* Interactive Layer - Control (Nav/Button) with Mix Blend Difference */}
       <header className={`fixed top-0 left-0 right-0 py-4 px-4 md:px-8 flex justify-between items-center z-[70] transition-colors duration-500 ${isMenuOpen ? 'text-white' : 'text-white mix-blend-difference'}`}>
-        <div className="relative w-24 h-6 md:w-28 md:h-8 flex items-center">
-          <span className="font-serif text-2xl font-bold tracking-widest leading-none">QOLA</span>
+        {/* Logo Placeholder - Invisible but maintains layout spacing */}
+        <div className="relative w-16 h-7 md:w-24 md:h-7 flex items-center invisible">
+          {/* Empty placeholder div with same dimensions */}
         </div>
 
         {/* 桌面端导航 */}
-        <nav className={`hidden md:flex gap-10 text-sm tracking-[0.2em] uppercase font-medium items-center absolute left-1/2 -translate-x-1/2 transition-opacity duration-500 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <nav className={`hidden md:flex gap-10 text-sm tracking-[0.2em] uppercase font-medium items-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           {navLinks.map((link) => (
             <NavLink 
               key={link.label} 
@@ -84,7 +104,7 @@ export default function PortalHeader() {
 
 
         {/* 移动端快捷导航 */}
-        <nav className={`flex md:hidden gap-5 text-sm uppercase tracking-[0.2em] font-medium items-center absolute left-1/2 -translate-x-1/2 transition-opacity duration-500 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <nav className={`flex md:hidden gap-5 text-sm uppercase tracking-[0.2em] font-medium items-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           {mobileNavLinks.map((link) => (
             <NavLink 
               key={link.label} 

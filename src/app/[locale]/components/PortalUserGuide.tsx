@@ -41,7 +41,7 @@ const steps = [
 
 export default function PortalUserGuide() {
   const [activeStep, setActiveStep] = useState<number | null>(null);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -62,50 +62,11 @@ export default function PortalUserGuide() {
             duration: 1.2,
             ease: "power3.out",
         });
-
-        // Steps sequence animation
-        steps.forEach((_, index) => {
-            tl.to({}, {
-                duration: 0.8,
-                onStart: () => setActiveStep(index),
-            }, "-=0.3");
-        });
-
-        // Reset after sequence
-        tl.to({}, {
-            duration: 0.8,
-            onStart: () => {
-                setActiveStep(null);
-                setIsAutoPlaying(false);
-            },
-        });
     }, containerRef);
     return () => ctx.revert();
   }, []);
 
-  // Handle GSAP animations for hover states
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      stepsRef.current.forEach((el, index) => {
-          if (!el) return;
-          
-          const bgGradient = el.querySelector('.step-gradient');
-          const bgImage = el.querySelector('.step-image');
-          
-          const isActive = activeStep === index;
 
-          if (isActive) {
-              gsap.to(bgGradient, { opacity: 0, duration: 0.5 });
-              gsap.to(bgImage, { opacity: 1, duration: 0.5 });
-          } else {
-              gsap.to(bgGradient, { opacity: 1, duration: 0.5 });
-              gsap.to(bgImage, { opacity: 0, duration: 0.5 });
-          }
-      });
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, [activeStep]);
 
   const handleMouseEnter = (index: number) => {
     if (isAutoPlaying) return;
@@ -158,7 +119,7 @@ export default function PortalUserGuide() {
             onClick={() => setActiveStep(index)}
           >
             {/* Background Image Layer */}
-            <div className="step-image absolute inset-0 z-0 opacity-0 transition-transform duration-700 group-hover:scale-105">
+            <div className="step-image absolute inset-0 z-0 transition-transform duration-700 group-hover:scale-105">
                 <Image
                     src={step.image}
                     alt={step.title}
@@ -170,8 +131,7 @@ export default function PortalUserGuide() {
                 <div className="absolute inset-0 bg-black/20" />
             </div>
 
-            {/* Default Gradient Background */}
-            <div className="step-gradient absolute inset-0 z-10 bg-gradient-to-b from-white to-black/60" />
+
 
             {/* Content */}
              <div className="absolute bottom-6 left-6 md:left-8 z-20 pointer-events-none pr-4">
